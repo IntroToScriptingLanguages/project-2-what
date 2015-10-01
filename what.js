@@ -240,8 +240,41 @@ function printText(){ //Prints the text in "Text", adding it to the essay
 }
 
 function playerType(){ //Changes the instructions under 'instruct', based on the current mode, player's turn
-
-
+switch (mode) { //These are all the possible "modes"
+    case 'subject': //Choose a noun, slap it here!
+         instruct.innerHTML = "Give me a thing that you like!";
+         break;
+    case 'verb_obj': //Choose a verb with an object
+         instruct.innerHTML = "Give me something you do to something else!";
+         break;
+    case 'verb_none': //Choose a verb with nothing at the end
+         instruct.innerHTML = "Give me a verb for something you just do!";
+         break;
+    case 'verb_adj': //Choose a verb with an adjective
+         instruct.innerHTML = "Give me a verb you use to convey what you are and what you feel!";
+         break;
+    case 'object': //Choose a noun, slap it here!
+          instruct.innerHTML = "Give me a thing that we're doing something to!";
+          break;
+    case 'adjective': //Choose an adjective
+          instruct.innerHTML = "Give me an attribute that you use to describe something!";
+          break;
+    case 'possessive': //Choose a noun to describe another noun!
+          instruct.innerHTML = "Give me a name for who or what this belongs to!";
+          break;
+    case 'preposition': //Choose a preposition
+          instruct.innerHTML = "Give me a word that tells position in some way (like 'at' or 'before')!";
+          break;
+    case 'conjunction': //Choose a conjunction
+          instruct.innerHTML = "Give me a word that connects two different ideas (like 'and' or 'so')!";
+          break;
+    case 'transition': //Choose a transition
+          instruct.innerHTML = "Give me a transition word or phrase to jump-start this sentence!";
+          break;
+    case 'desc_adjective': //Choose an adjective that describes the subject
+          instruct.innerHTML = "Give me an attribute you use to describe this!";
+          break;
+}
 }
 
 function randomInt(num){ //Returns a random integer from 0 to num (inclusive)
@@ -249,7 +282,25 @@ function randomInt(num){ //Returns a random integer from 0 to num (inclusive)
 }
 
 function endSentence(){ //Ends the current sentence
+    essay.innerHTML += ". "//Add a period here!
+    if (sentence == paragraph) //Start a new paragraph
+    {
+       paragraph = 3+randomInt(3); //This next paragraph can have 3-6 sentences!
+       sentence = 1;
+       essay.innerHTMl += "\n\n"
+    }
+    else {
+       sentence++;
+    }
 
+    temp_int = randomInt(99); //70% transition, 30% subject
+    if (temp_int < 70)
+    {
+       mode = 'transition'
+    }
+    else {
+       mode = 'subject';
+    }
 }
 
 function getText() { //Gets the text from the textarea
