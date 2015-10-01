@@ -9,6 +9,7 @@ var temp_int; //Used for randomizing
 
 var mode = 'start'; //Our mode!
 var fragment = false; //If we're in a sentence fragment after a preposition.
+var sentence_start = true; //We start all sentences with capital letters!
 var paragraph = 4; //How many sentences per paragraph
 var sentence = 1; //The sentence we're on.  Once we hit paragraph at the end of sentence we move onto another paragraph.
 
@@ -17,7 +18,7 @@ var sentence = 1; //The sentence we're on.  Once we hit paragraph at the end of 
 var noun = ['cat', 'dog', 'car', 'house', 'tree', 'ball', 'water', 'plane', 'nurse', 'star',
             'dragon', 'stapler', 'pencil', 'book', 'computer', 'mouse', 'tail', 'light', 'chair', 'gun',
             'Charmander', 'Bulbasaur', 'Squirtle', 'file', 'leaf', 'orange', 'apple', 'banana', 'potato', 'sword',
-            'desk', 'ocean', 'movie', 'tower', 'farm', 'painting', 'bar', 'TV', 'radio', 'doctor'
+            'desk', 'ocean', 'movie', 'tower', 'farm', 'painting', 'bar', 'TV', 'radio', 'doctor',
             'lawyer', 'teacher', 'cloud', 'mountain', 'thunderstorm', 'refrigerator', 'raindrop', 'pillow', 'spider', 'actor']; //50 elements
 
 var verb_object = ['climbed up', 'crawled to', 'ate', 'stabbed', 'looked at', 'bit', 'entered', 'drove', 'fell in love with', 'broke',
@@ -49,9 +50,16 @@ var transition = [ 'first', 'alternatively', 'furthermore', 'finally', 'as a mat
 
 textarea.addEventListener('change', function() {
   text = getText();
-  if (mode != 'start' || text == 'start' || text == 'Start')
+  if (mode != 'start')
   {
       printText();
+      changeMode();
+      AIType();
+      changeMode();
+      playerType();
+  }
+  else if (text == 'start' || text == 'Start') //Start the game!
+  {
       changeMode();
       AIType();
       changeMode();
@@ -229,12 +237,24 @@ function changeMode(){ //Changes the mode based on the current one.  Also handle
 }
 
 function printText(){ //Prints the text in "Text", adding it to the essay
+  if (sentence_start == true)
+  {
+    if (mode == 'subject' || mode == 'object')
+       essay.innerHTML += " The" + text;
+    else if (mode == 'transition')
+       essay.innerHTML += " " + capitalize(text) + ",";
+    else {
+      essay.innerHTML += " " + capitalize(text) + ",";
+    }
+  }
   if (mode == 'conjunction')
      essay.innerHTML += ", " + text;
   else if (mode == 'possessive')
      essay.innerHTML += " " + text + "'s";
   else if (mode == 'transition')
      essay.innerHTML += " " + text + ",";
+  else if (mode == 'subject' || mode == 'object')
+     essay.innerHTML += " the" + text;
   else
      essay.innerHTML += " " + text;
 }
@@ -274,7 +294,7 @@ switch (mode) { //These are all the possible "modes"
     case 'desc_adjective': //Choose an adjective that describes the subject
           instruct.innerHTML = "Give me an attribute you use to describe this!";
           break;
-}
+    }
 }
 
 function randomInt(num){ //Returns a random integer from 0 to num (inclusive)
@@ -301,10 +321,17 @@ function endSentence(){ //Ends the current sentence
     else {
        mode = 'subject';
     }
+
+    fragment = false;
+    sentence_start = true;
 }
 
 function getText() { //Gets the text from the textarea
   var text_to_get = textarea.value;
   textarea.value = "";
   return text_to_get;
+}
+
+function capitalize(string) { //Capitalizes first letter of string.
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
