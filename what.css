@@ -14,9 +14,10 @@ body {
 
 .desc{
 	 width: 100%;
-	 height: 24px;
+	 height: 48px;
 	 font-family: helvetica, sans-serif;
 	 font-size: 12px;
+	 line-height: 1;
 }
 
 /*No fixed height!*/
