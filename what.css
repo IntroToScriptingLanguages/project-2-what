@@ -18,7 +18,7 @@ body {
 	 font-family: helvetica, sans-serif;
 	 font-size: 12px;
 	 line-height: 1;
-	 vertical-align: text-top;
+	 padding: 10px;
 }
 
 /*No fixed height!*/
@@ -29,7 +29,7 @@ body {
 		font-family: helvetica, sans-serif;
 		font-size: 12px;
 		line-height: 1;
-		vertical-align: text-top;
+    padding: 10px;
 }
 
 textarea {
