@@ -49,21 +49,14 @@ var transition = [ 'first', 'alternatively', 'furthermore', 'finally', 'as a mat
 
 textarea.addEventListener('change', function() {
   text = getText();
-  if (mode != 'start')
+  if (mode != 'start' || text == 'start' || text == 'Start')
   {
-      essay.innerHTML += " " + text;
+      printText();
       changeMode();
       AIType();
       changeMode();
       playerType();
   }
-  else if (text == 'start' || text == 'Start') //Let's start!
-   {
-      changeMode();
-      AIType();
-      changeMode();
-      playerType();
-   }
 
 }, false);
 
@@ -88,7 +81,7 @@ function AIType(){ //The AI will choose the next word of the sentence, based on 
              text = adjective[randomInt(39)];
              break;
        case 'possessive': //Choose a noun to describe another noun!
-             text = noun[randomInt(49)]+"'s";
+             text = noun[randomInt(49)];
              break;
        case 'preposition': //Choose a preposition
              text = preposition[randomInt(19)];
@@ -103,10 +96,7 @@ function AIType(){ //The AI will choose the next word of the sentence, based on 
              text = adjective[randomInt(39)];
              break;
    }
-   if (mode == 'conjunction')
-      essay.innerHTML += ", " + text;
-   else
-      essay.innerHTML += " " + text;
+   printText();
 }
 
 function changeMode(){ //Changes the mode based on the current one.  Also handles punctuation.
@@ -114,57 +104,152 @@ function changeMode(){ //Changes the mode based on the current one.  Also handle
       case 'start': //Start with the subject!
            mode = 'subject';
            break;
-      case 'subject': //75% object verb, 15% adjective verb, 10% nothing verb
+      case 'subject': //75% object verb, 15% adjective verb, 10% nothing verb.  If preposition, 50% object verb, 50% nothing verb.
            temp_int = randomInt(99);
-           if (temp_int < 75)
+           if (fragment == false)
            {
-              mode = 'verb_obj';
+             if (temp_int < 75)
+             {
+                mode = 'verb_obj';
+             }
+             else if (temp_int < 90)
+             {
+                mode = 'verb_adj';
+             }
+             else {
+                mode = 'verb_none';
+             }
            }
-           else if (temp_int < 90)
+           else
            {
-              mode = 'verb_adj';
+             if (temp_int < 50)
+             {
+                mode = 'verb_obj';
+             }
+             else {
+                mode = 'verb_none';
+             }
            }
-           else {
-              mode = 'verb_none';
-           }
            break;
-      case 'verb_obj': //60% adjective, 40% straight object
-           text = verb_object[randomInt(24)];
+      case 'verb_obj': //30% adjective, 30% possessive, 40% object.  If a preposition, end the sentence.
+            temp_int = randomInt(99);
+            if (fragment == false)
+            {
+              if (temp_int < 30)
+              {
+                 mode = 'adjective';
+              }
+              else if (temp_int < 60)
+                 mode = 'possessive';
+              else {
+                 mode = 'object';
+              }
+            }
+            else {
+              endSentence();
+              fragment = false;
+            }
            break;
-      case 'verb_none': //Choose a verb with nothing at the end
-           text = verb_none[randomInt(7)];
+      case 'verb_none': //40% end sentence, 30% preposition, 30% conjunction.  If a preposition, end sentence
+            temp_int = randomInt(99);
+            if (fragment == false)
+            {
+              if (temp_int < 40)
+              {
+                 endSentence();
+              }
+              else if (temp_int < 70)
+                 mode = 'preposition';
+              else {
+                 mode = 'conjunction';
+              }
+            }
+            else {
+              endSentence();
+              fragment = false;
+            }
            break;
-      case 'verb_adj': //Choose a verb with an adjective
-           text = verb_adj[randomInt(4)];
+      case 'verb_adj': //100% desc_adjective;
+           mode = 'desc_adjective';
            break;
-      case 'object': //Choose a noun, slap it here!
-            text = noun[randomInt(49)];
+      case 'object': //40% end sentence, 30% preposition, 30% conjunction.  If a preposition, end sentence
+            temp_int = randomInt(99);
+            if (temp_int < 40)
+            {
+               endSentence();
+            }
+            else if (temp_int < 70)
+               mode = 'preposition';
+            else {
+               mode = 'conjunction';
+            }
             break;
-      case 'adjective': //Choose an adjective
-            text = adjective[randomInt(39)];
+      case 'adjective': //70% object, 30% adjective
+            temp_int = randomInt(99);
+            if (temp_int < 70)
+            {
+               mode = 'object';
+            }
+            else {
+               mode = 'adjective';
+            }
             break;
-      case 'preposition': //Choose a preposition
-            text = preposition[randomInt(19)];
+      case 'possessive': //70% object, 30% adjective
+            temp_int = randomInt(99);
+            if (temp_int < 70)
+            {
+               mode = 'object';
+            }
+            else {
+               mode = 'adjective';
+            }
             break;
-      case 'conjunction': //Choose a conjunction
-            text = conjunction[randomInt(9)];
+      case 'preposition': //Set fragment to true.  100% subject
+            mode = 'subject';
+            fragment = true;
             break;
-      case 'transition': //Choose a transition
-            text = transition[randomInt(29)];
+      case 'conjunction': //100% subject
+            mode = 'subject';
             break;
-      case 'desc_adjective': //Choose an adjective that describes the subject
-            text = adjective[randomInt(39)];
+      case 'transition': //100% subject
+            mode = 'subject';
+            break;
+      case 'desc_adjective': //60% end sentence, 40% conjunction.  If a preposition, end sentence
+            temp_int = randomInt(99);
+            if (temp_int < 60)
+            {
+               endSentence();
+            }
+            else {
+               mode = 'conjunction';
+            }
             break;
   }
   console.log(mode);
 }
 
+function printText(){ //Prints the text in "Text", adding it to the essay
+  if (mode == 'conjunction')
+     essay.innerHTML += ", " + text;
+  else if (mode == 'possessive')
+     essay.innerHTML += " " + text + "'s";
+  else if (mode == 'transition')
+     essay.innerHTML += " " + text + ",";
+  else
+     essay.innerHTML += " " + text;
+}
+
 function playerType(){ //Changes the instructions under 'instruct', based on the current mode, player's turn
+
 
 }
 
 function randomInt(num){ //Returns a random integer from 0 to num (inclusive)
   return Math.floor((Math.random() * num)) + 1;
+}
+
+function endSentence(){ //Ends the current sentence
+
 }
 
 function getText() { //Gets the text from the textarea
