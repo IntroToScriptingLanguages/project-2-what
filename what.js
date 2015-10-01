@@ -10,14 +10,14 @@ var temp_int; //Used for randomizing
 var mode = 'start'; //Our mode!
 var fragment = false; //If we're in a sentence fragment after a preposition.
 var sentence_start = true; //We start all sentences with capital letters!
-var the = true; //Put "the" before the word!
+var the = false; //Put "the" before the word!
 var paragraph = 4; //How many sentences per paragraph
 var sentence = 1; //The sentence we're on.  Once we hit paragraph at the end of sentence we move onto another paragraph.
 
 //All the words the AI will use:
 
 var noun = ['cat', 'dog', 'car', 'house', 'tree', 'ball', 'water', 'plane', 'nurse', 'star',
-            'dragon', 'stapler', 'pencil', 'book', 'computer', 'mouse', 'tail', 'light', 'chair', 'gun',
+            'dragon', 'stapler', 'pencil', 'book', 'computer', 'mouse', 'tail', 'lampshade', 'chair', 'gun',
             'Charmander', 'Bulbasaur', 'Squirtle', 'file', 'leaf', 'orange', 'apple', 'banana', 'potato', 'sword',
             'desk', 'ocean', 'movie', 'tower', 'farm', 'painting', 'bar', 'TV', 'radio', 'doctor',
             'lawyer', 'teacher', 'cloud', 'mountain', 'thunderstorm', 'refrigerator', 'raindrop', 'pillow', 'spider', 'actor']; //50 elements
@@ -143,8 +143,10 @@ function changeMode(){ //Changes the mode based on the current one.  Also handle
                  the = true; //We put "the" before this word!
               }
               else if (temp_int < 60)
+              {
                  mode = 'possessive';
                  the = true; //We put "the" before this word!
+               }
               else {
                  mode = 'object';
                  the = true; //We put "the" before this word!
@@ -232,17 +234,18 @@ function printText(){ //Prints the text in "Text", adding it to the essay
       text = " The "+text;
       the = false;
     }
-    else if (mode == 'transition')
+
+    if (mode == 'transition')
        essay.innerHTML += " " + capitalize(text) + ",";
     else {
-      essay.innerHTML += " " + capitalize(text) + ",";
+      essay.innerHTML += " " + capitalize(text);
     }
     sentence_start = false;
   }
   else { //Lowercase the first letter!
     if (the)//Put "the" before word!
     {
-      text = " the "
+      text = " the "+text;
       the = false;
     }
 
@@ -300,12 +303,13 @@ function randomInt(num){ //Returns a random integer from 0 to num (inclusive)
 }
 
 function endSentence(){ //Ends the current sentence
-    essay.innerHTML += ". "//Add a period here!
-    if (sentence == paragraph) //Start a new paragraph
+    essay.innerHTML += ". ";//Add a period here!
+    if (sentence >= paragraph) //Start a new paragraph
     {
        paragraph = 3+randomInt(3); //This next paragraph can have 3-6 sentences!
        sentence = 1;
-       essay.innerHTMl += "\n\n"
+       essay.innerHTML += '<br><br>';
+       console.log("New paragraph!")
     }
     else {
        sentence++;
