@@ -5,8 +5,12 @@ var stop = document.getElementById('stop');
 var instruct = document.getElementById('instruct');
 var form = document.getElementsByTagName('form')[0];
 var pause = false;
-var mode = 'start'; //start,
-var paragraph = 4;
+var temp_int; //Used for randomizing
+
+var mode = 'start'; //Our mode!
+var fragment = false; //If we're in a sentence fragment after a preposition.
+var paragraph = 4; //How many sentences per paragraph
+var sentence = 1; //The sentence we're on.  Once we hit paragraph at the end of sentence we move onto another paragraph.
 
 //All the words the AI will use:
 
@@ -64,25 +68,95 @@ textarea.addEventListener('change', function() {
 }, false);
 
 function AIType(){ //The AI will choose the next word of the sentence, based on the mode, AI turn
-   switch (mode) {
-       case 'noun': //Choose a noun, slap it here!
+   switch (mode) { //These are all the possible "modes"
+       case 'subject': //Choose a noun, slap it here!
           text = noun[randomInt(49)];
           break;
-       case 'verb': //Choose a verb
-          var random_verb = randomInt(99); //80% chance of object verb, 10% chance of adjective verb, 10% chance of nothing verb
-          if (random_verb < 80)
-            text = verb[randomInt(24)];
-          else if (random_verb < 90)
-            text = verb[randomInt(7)];
-          else
-            text = verb[randomInt(4)];
-          break;
+       case 'verb_obj': //Choose a verb with an object
+            text = verb_object[randomInt(24)];
+            break;
+       case 'verb_none': //Choose a verb with nothing at the end
+            text = verb_none[randomInt(7)];
+            break;
+       case 'verb_adj': //Choose a verb with an adjective
+            text = verb_adj[randomInt(4)];
+            break;
+       case 'object': //Choose a noun, slap it here!
+             text = noun[randomInt(49)];
+             break;
+       case 'adjective': //Choose an adjective
+             text = adjective[randomInt(39)];
+             break;
+       case 'possessive': //Choose a noun to describe another noun!
+             text = noun[randomInt(49)]+"'s";
+             break;
+       case 'preposition': //Choose a preposition
+             text = preposition[randomInt(19)];
+             break;
+       case 'conjunction': //Choose a conjunction
+             text = conjunction[randomInt(9)];
+             break;
+       case 'transition': //Choose a transition
+             text = transition[randomInt(29)];
+             break;
+       case 'desc_adjective': //Choose an adjective that describes the subject
+             text = adjective[randomInt(39)];
+             break;
    }
-   essay.innerHTML += " " + text;
+   if (mode == 'conjunction')
+      essay.innerHTML += ", " + text;
+   else
+      essay.innerHTML += " " + text;
 }
 
 function changeMode(){ //Changes the mode based on the current one.  Also handles punctuation.
-
+  switch (mode) { //These are all the possible "modes"
+      case 'start': //Start with the subject!
+           mode = 'subject';
+           break;
+      case 'subject': //75% object verb, 15% adjective verb, 10% nothing verb
+           temp_int = randomInt(99);
+           if (temp_int < 75)
+           {
+              mode = 'verb_obj';
+           }
+           else if (temp_int < 90)
+           {
+              mode = 'verb_adj';
+           }
+           else {
+              mode = 'verb_none';
+           }
+           break;
+      case 'verb_obj': //60% adjective, 40% straight object
+           text = verb_object[randomInt(24)];
+           break;
+      case 'verb_none': //Choose a verb with nothing at the end
+           text = verb_none[randomInt(7)];
+           break;
+      case 'verb_adj': //Choose a verb with an adjective
+           text = verb_adj[randomInt(4)];
+           break;
+      case 'object': //Choose a noun, slap it here!
+            text = noun[randomInt(49)];
+            break;
+      case 'adjective': //Choose an adjective
+            text = adjective[randomInt(39)];
+            break;
+      case 'preposition': //Choose a preposition
+            text = preposition[randomInt(19)];
+            break;
+      case 'conjunction': //Choose a conjunction
+            text = conjunction[randomInt(9)];
+            break;
+      case 'transition': //Choose a transition
+            text = transition[randomInt(29)];
+            break;
+      case 'desc_adjective': //Choose an adjective that describes the subject
+            text = adjective[randomInt(39)];
+            break;
+  }
+  console.log(mode);
 }
 
 function playerType(){ //Changes the instructions under 'instruct', based on the current mode, player's turn
