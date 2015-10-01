@@ -6,6 +6,7 @@ var instruct = document.getElementById('instruct');
 var form = document.getElementsByTagName('form')[0];
 var pause = false;
 var mode = 'start'; //start,
+var paragraph = 4;
 
 //All the words the AI will use:
 
@@ -27,7 +28,7 @@ var verb_adj = ['was', 'became', 'grew', 'turned', 'felt'
 var adjective = [ 'red', 'blue', 'sad', 'happy', 'hot', 'cold', 'fat', 'green', 'angry', 'steamy',
 'bored', 'angry', 'high', 'low', 'flat', 'dry', 'hilarious', 'stupid', 'stormy', 'watery',
 'fierce', 'sharp', 'dull', 'bright', 'dark', 'invisible', 'violent', 'evil', 'good', 'kind',
-'brutal', 'easy', 'hard', 'elegant', 'beautiful', 'timid', 'massive', 'tiny', 'small', 'big'
+'brutal', 'easy', 'hard', 'elegant', 'beautiful', 'timid', 'massive', 'mutated', 'small', 'big'
 ]; //40 elements, describes things
 
 var conjunction = [ 'for', 'and', 'nor', 'but', 'or', 'yet', 'so', 'while', 'if', 'therefore'
@@ -47,28 +48,44 @@ textarea.addEventListener('change', function() {
   if (mode != 'start')
   {
       essay.innerHTML += " " + text;
+      changeMode();
+      AIType();
+      changeMode();
+      playerType();
   }
+  else if (text == 'start' || text == 'Start') //Let's start!
+   {
+      changeMode();
+      AIType();
+      changeMode();
+      playerType();
+   }
 
-  AIType();
 }, false);
 
-function AIType(){ //The AI will choose the next word of the sentence, based on the mode.
+function AIType(){ //The AI will choose the next word of the sentence, based on the mode, AI turn
    switch (mode) {
-       case 'start': //Checks to see if you've typed "start"!
-           if (text == 'start' || text == 'Start') //Let's start!
-            {
-                essay.innerHTML = text;
-
-            }
-           break;
+       case 'noun': //Choose a noun, slap it here!
+          text = noun[randomInt(49)];
+          break;
+       case 'verb': //Choose a verb
+          var random_verb = randomInt(99); //80% chance of object verb, 10% chance of adjective verb, 10% chance of nothing verb
+          if (random_verb < 80)
+            text = verb[randomInt(24)];
+          else if (random_verb < 90)
+            text = verb[randomInt(7)];
+          else
+            text = verb[randomInt(4)];
+          break;
    }
+   essay.innerHTML += " " + text;
 }
 
-function changeMode(){ //Changes the mode based on the current one.
+function changeMode(){ //Changes the mode based on the current one.  Also handles punctuation.
 
 }
 
-function changeInstructions(){ //Changes the instructions under 'instruct', based on the current mode
+function playerType(){ //Changes the instructions under 'instruct', based on the current mode, player's turn
 
 }
 
