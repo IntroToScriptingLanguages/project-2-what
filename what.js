@@ -272,7 +272,7 @@ switch (mode) { //These are all the possible "modes"
          instruct.innerHTML = "Give me a verb for something you just do!";
          break;
     case 'verb_adj': //Choose a verb with an adjective
-         instruct.innerHTML = "Give me a verb you use to convey what you are and what you feel!";
+         instruct.innerHTML = "Give me a verb you use to convey what you are and what you feel (like 'was' or 'felt')!";
          break;
     case 'object': //Choose a noun, slap it here!
           instruct.innerHTML = "Give me a thing that we're doing something to!";
