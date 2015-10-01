@@ -10,6 +10,7 @@ var temp_int; //Used for randomizing
 var mode = 'start'; //Our mode!
 var fragment = false; //If we're in a sentence fragment after a preposition.
 var sentence_start = true; //We start all sentences with capital letters!
+var the = true; //Put "the" before the word!
 var paragraph = 4; //How many sentences per paragraph
 var sentence = 1; //The sentence we're on.  Once we hit paragraph at the end of sentence we move onto another paragraph.
 
@@ -111,8 +112,9 @@ function changeMode(){ //Changes the mode based on the current one.  Also handle
   switch (mode) { //These are all the possible "modes"
       case 'start': //Start with the subject!
            mode = 'subject';
+           the = true; //We put "the" before this word!
            break;
-      case 'subject': //75% object verb, 15% adjective verb, 10% nothing verb.  If preposition, 50% object verb, 50% nothing verb.
+      case 'subject': //75% object verb, 15% adjective verb, 10% nothing verb.  If preposition, end the sentence!
            temp_int = randomInt(99);
            if (fragment == false)
            {
@@ -130,38 +132,26 @@ function changeMode(){ //Changes the mode based on the current one.  Also handle
            }
            else
            {
-             if (temp_int < 50)
-             {
-                mode = 'verb_obj';
-             }
-             else {
-                mode = 'verb_none';
-             }
+             endSentence();
            }
            break;
-      case 'verb_obj': //30% adjective, 30% possessive, 40% object.  If a preposition, end the sentence.
+      case 'verb_obj': //30% adjective, 30% possessive, 40% object.
             temp_int = randomInt(99);
-            if (fragment == false)
-            {
               if (temp_int < 30)
               {
                  mode = 'adjective';
+                 the = true; //We put "the" before this word!
               }
               else if (temp_int < 60)
                  mode = 'possessive';
+                 the = true; //We put "the" before this word!
               else {
                  mode = 'object';
+                 the = true; //We put "the" before this word!
               }
-            }
-            else {
-              endSentence();
-              fragment = false;
-            }
            break;
-      case 'verb_none': //40% end sentence, 30% preposition, 30% conjunction.  If a preposition, end sentence
+      case 'verb_none': //40% end sentence, 30% preposition, 30% conjunction.
             temp_int = randomInt(99);
-            if (fragment == false)
-            {
               if (temp_int < 40)
               {
                  endSentence();
@@ -171,16 +161,11 @@ function changeMode(){ //Changes the mode based on the current one.  Also handle
               else {
                  mode = 'conjunction';
               }
-            }
-            else {
-              endSentence();
-              fragment = false;
-            }
            break;
       case 'verb_adj': //100% desc_adjective;
            mode = 'desc_adjective';
            break;
-      case 'object': //40% end sentence, 30% preposition, 30% conjunction.  If a preposition, end sentence
+      case 'object': //40% end sentence, 30% preposition, 30% conjunction.
             temp_int = randomInt(99);
             if (temp_int < 40)
             {
@@ -214,15 +199,18 @@ function changeMode(){ //Changes the mode based on the current one.  Also handle
             break;
       case 'preposition': //Set fragment to true.  100% subject
             mode = 'subject';
+            the = true; //We put "the" before this word!
             fragment = true;
             break;
       case 'conjunction': //100% subject
             mode = 'subject';
+            the = true; //We put "the" before this word!
             break;
       case 'transition': //100% subject
             mode = 'subject';
+            the = true; //We put "the" before this word!
             break;
-      case 'desc_adjective': //60% end sentence, 40% conjunction.  If a preposition, end sentence
+      case 'desc_adjective': //60% end sentence, 40% conjunction.
             temp_int = randomInt(99);
             if (temp_int < 60)
             {
@@ -237,26 +225,36 @@ function changeMode(){ //Changes the mode based on the current one.  Also handle
 }
 
 function printText(){ //Prints the text in "Text", adding it to the essay
-  if (sentence_start == true)
+  if (sentence_start == true) //Capitalize the first letter of the word!
   {
-    if (mode == 'subject' || mode == 'object')
-       essay.innerHTML += " The" + text;
+    if (the) //Put "the" before word!
+    {
+      text = " The "+text;
+      the = false;
+    }
     else if (mode == 'transition')
        essay.innerHTML += " " + capitalize(text) + ",";
     else {
       essay.innerHTML += " " + capitalize(text) + ",";
     }
+    sentence_start = false;
   }
+  else { //Lowercase the first letter!
+    if (the)//Put "the" before word!
+    {
+      text = " the "
+      the = false;
+    }
+
   if (mode == 'conjunction')
      essay.innerHTML += ", " + text;
   else if (mode == 'possessive')
-     essay.innerHTML += " " + text + "'s";
+     essay.innerHTML += text + "'s";
   else if (mode == 'transition')
      essay.innerHTML += " " + text + ",";
-  else if (mode == 'subject' || mode == 'object')
-     essay.innerHTML += " the" + text;
   else
      essay.innerHTML += " " + text;
+   }
 }
 
 function playerType(){ //Changes the instructions under 'instruct', based on the current mode, player's turn
@@ -280,7 +278,7 @@ switch (mode) { //These are all the possible "modes"
           instruct.innerHTML = "Give me an attribute that you use to describe something!";
           break;
     case 'possessive': //Choose a noun to describe another noun!
-          instruct.innerHTML = "Give me a name for who or what this belongs to!";
+          instruct.innerHTML = "Give me a name for what this belongs to!";
           break;
     case 'preposition': //Choose a preposition
           instruct.innerHTML = "Give me a word that tells position in some way (like 'at' or 'before')!";
@@ -320,6 +318,7 @@ function endSentence(){ //Ends the current sentence
     }
     else {
        mode = 'subject';
+       the = true; //We put "the" before this word!
     }
 
     fragment = false;
