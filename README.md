@@ -6,6 +6,6 @@ During your turn, you get a prompt telling you what type of words to write.  For
 
 The computer, on the other hand, randomly chooses words and phrases from a small dictionary pool of over 100 words.
 
-Punctuation is automatically added, each essay is divided into paragraphs on 3-6 sentences each.
+Punctuation, article adjectives, spaces, and line breaks are automatically added; each essay is divided into paragraphs on 3-6 sentences each.
 
 Project by Leo Zhang
